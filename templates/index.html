@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniPocket | Finance Tracker</title>
+    <link rel="icon" href="data:,">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=DM+Serif+Display&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --peach: #FFD6C0;
+            --lavender: #DDD6F3;
+            --mint: #C7EFD4;
+            --sky: #C2E4F8;
+            --lemon: #FFF4C2;
+            --rose: #F9C6CE;
+            --text: #3D3250;
+            --muted: #8A7FAB;
+            --white: #FFFFFF;
+            --card-bg: #FDFCFF;
+            --border: #EDE9F7;
+            --danger: #F47C7C;
+            --success: #5BC882;
+            --brand: #9B7FD4;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #FFF0F5 0%, #F0EEFF 50%, #E8F7FF 100%);
+            min-height: 100vh;
+            color: var(--text);
+        }
+
+        .auth-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border);
+            border-radius: 28px;
+            padding: 44px 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(155, 127, 212, 0.12);
+        }
+
+        .logo-area {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--lavender), var(--sky));
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .logo-area h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 26px;
+        }
+
+        .tab-row {
+            display: flex;
+            background: var(--border);
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 26px;
+            gap: 4px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 11px;
+            background: transparent;
+            color: var(--muted);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background: var(--white);
+            color: var(--brand);
+            box-shadow: 0 2px 8px rgba(155, 127, 212, 0.15);
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--muted);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 13px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            outline: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--brand), #7B5EC4);
+            color: white;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .btn.danger {
+            background: linear-gradient(135deg, var(--danger), #D95C5C);
+        }
+
+        .btn.small {
+            width: auto;
+            padding: 7px 14px;
+            font-size: 12px;
+        }
+
+        .error-msg {
+            background: #FDECEA;
+            color: #C0392B;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .dash-wrap {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            border-radius: 20px;
+            padding: 22px 24px;
+            position: relative;
+        }
+
+        .stat-card.balance {
+            background: var(--lavender);
+        }
+
+        .stat-card.spent {
+            background: var(--peach);
+        }
+
+        .stat-card.count {
+            background: var(--mint);
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border);
+            border-radius: 22px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .add-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 140px auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .exp-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .exp-table th,
+        .exp-table td {
+            text-align: left;
+            padding: 13px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cat-pill {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--sky);
+        }
+
+        .b-track {
+            background: var(--border);
+            border-radius: 100px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .b-fill {
+            height: 100%;
+            transition: width .6s ease;
+        }
+
+        .b-safe {
+            background: var(--success);
+        }
+
+        .b-danger {
+            background: var(--danger);
+        }
+
+        .pill-food {
+            background: #C7EFD4;
+            color: #2D6A4F;
+        }
+
+        .pill-travel {
+            background: #C2E4F8;
+            color: #023E8A;
+        }
+
+        .pill-college {
+            background: #FFF4C2;
+            color: #7F5539;
+        }
+
+        .pill-shopping {
+            background: #FFD6C0;
+            color: #78290F;
+        }
+
+        .pill-others {
+            background: #E9ECEF;
+            color: #495057;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--danger);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(244, 124, 124, 0.4);
+            font-weight: 800;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="auth-section" class="auth-wrap">
+        <div class="auth-card">
+            <div class="logo-area">
+                <div class="logo-icon">💰</div>
+                <h1>UniPocket</h1>
+                <p>Spend Wise · Save Smart</p>
+            </div>
+            <div class="tab-row">
+                <button class="tab-btn active" id="tab-login" onclick="showTab('login')">Login</button>
+                <button class="tab-btn" id="tab-reg" onclick="showTab('reg')">Sign Up</button>
+            </div>
+            <div id="login-form">
+                <div class="field"><label>Email</label><input type="email" id="l-email"
+                        placeholder="email@mitwpu.edu.in"></div>
+                <div class="field"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••">
+                </div>
+                <button class="btn" onclick="login()">Login →</button>
+                <div class="error-msg" id="l-err"></div>
+            </div>
+            <div id="reg-form" class="hidden">
+                <div class="field"><label>Student ID</label><input type="text" id="r-id" placeholder="STU001"></div>
+                <div class="field"><label>Full Name</label><input type="text" id="r-name" placeholder="Your Name"></div>
+                <div class="field"><label>Email</label><input type="email" id="r-email" placeholder="you@mitwpu.edu.in">
+                </div>
+                <div class="field"><label>Password</label><input type="password" id="r-pass" placeholder="Min 6 chars">
+                </div>
+                <button class="btn" onclick="register()">Create Account →</button>
+                <div class="error-msg" id="r-err"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="dash-section" class="hidden">
+        <div class="dash-wrap">
+            <div class="top-bar">
+                <div>
+                    <div class="greeting" id="user-greet" style="font-size:24px; font-weight:bold;">Dashboard</div>
+                    <div style="color:var(--muted)">Your financial overview</div>
+                </div>
+                <button class="btn danger small" onclick="logout()">Logout</button>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card balance">
+                    <div style="font-size:12px; font-weight:700;">BALANCE</div>
+                    <div id="stat-balance" style="font-size:24px; font-weight:800;">₹ 0</div>
+                </div>
+                <div class="stat-card spent">
+                    <div style="font-size:12px; font-weight:700;">TOTAL SPENT</div>
+                    <div id="stat-spent" style="font-size:24px; font-weight:800;">₹ 0</div>
+                </div>
+                <div class="stat-card count">
+                    <div style="font-size:12px; font-weight:700;">TXNS</div>
+                    <div id="stat-count" style="font-size:24px; font-weight:800;">0</div>
+                </div>
+            </div>
+            <div class="panel">
+                <div style="font-weight:800; margin-bottom:15px;">➕ Add Expense</div>
+                <div class="add-row">
+                    <div class="field" style="margin:0"><label>Category</label><select id="exp-cat"></select></div>
+                    <div class="field" style="margin:0"><label>Note</label><input type="text" id="exp-note"></div>
+                    <div class="field" style="margin:0"><label>Amount (₹)</label><input type="number" id="exp-amt">
+                    </div>
+                    <button class="btn" style="width:auto; padding:13px 25px;" onclick="addExpense()">Add</button>
+                </div>
+                <div class="error-msg" id="exp-err"></div>
+            </div>
+            <div class="panel">
+                <div style="font-weight:800; margin-bottom:15px;">💵 Add Income / Update Balance</div>
+                <div class="add-row">
+                    <div class="field" style="margin:0; grid-column: span 2;"><label>Source</label><input type="text"
+                            id="inc-source"></div>
+                    <div class="field" style="margin:0"><label>Amount (₹)</label><input type="number" id="inc-amt">
+                    </div>
+                    <button class="btn" style="width:auto; padding:13px 25px;" onclick="addIncome()">Add</button>
+                </div>
+                <div class="error-msg" id="inc-err"></div>
+            </div>
+            <div class="panel">
+                <div style="font-weight:800; margin-bottom:15px;">📊 Budget Overview</div>
+                <div id="budget-list"></div>
+                <hr style="border:0; border-top:1.5px dashed var(--border); margin: 20px 0;">
+                <div style="font-weight:800; margin-bottom:15px; font-size:14px; color:var(--muted);">⚙️ Set Budget
+                    Limit</div>
+                <div class="add-row">
+                    <div class="field" style="margin:0"><label>Category</label><select id="budget-cat"></select></div>
+                    <div class="field" style="margin:0; grid-column: span 2;"><label>New Limit (₹)</label><input
+                            type="number" id="budget-amt"></div>
+                    <button class="btn" style="width:auto; padding:13px 25px;" onclick="updateBudget()">Update</button>
+                </div>
+            </div>
+            <div class="panel">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <div style="font-weight:800;">📝 Expense History</div>
+                    <div>
+                        <select id="exp-sort" onchange="loadDash()"
+                            style="padding:6px 12px; border-radius:10px; font-weight:700; color:var(--text); width:auto; border: 1.5px solid var(--border);">
+                            <option value="date_desc">Newest First</option>
+                            <option value="date_asc">Oldest First</option>
+                            <option value="amount_desc">Highest Amount</option>
+                            <option value="amount_asc">Lowest Amount</option>
+                            <option value="cat_name_asc">Category Name</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="exp-table-wrap"></div>
+            </div>
+            <div class="panel">
+                <div style="font-weight:800; margin-bottom:15px;">📝 Income History</div>
+                <div id="inc-table-wrap"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">Overbudget Warning!</div>
+
+    <script>
+        const API = "http://127.0.0.1:5000/api";
+        let curStuId = "", curAccId = null, allCategories = [], currentBudgets = [];
+
+        function showTab(tab) {
+            document.getElementById("login-form").classList.toggle("hidden", tab !== "login");
+            document.getElementById("reg-form").classList.toggle("hidden", tab !== "reg");
+            document.getElementById("tab-login").classList.toggle("active", tab === "login");
+            document.getElementById("tab-reg").classList.toggle("active", tab === "reg");
+        }
+
+        function showMsg(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.style.display = msg ? "block" : "none"; }
+
+        async function login() {
+            const email = document.getElementById("l-email").value, password = document.getElementById("l-pass").value;
+            try {
+                const res = await fetch(`${API}/login`, { method: "POST", body: JSON.stringify({ email, password }) });
+                const data = await res.json();
+                if (res.ok) goToDashboard(data.stu_id, data.name);
+                else showMsg("l-err", data.error);
+            } catch (err) { showMsg("l-err", "Err: " + err.message); console.error(err); }
+        }
+
+        async function register() {
+            const stu_id = document.getElementById("r-id").value, name = document.getElementById("r-name").value, email = document.getElementById("r-email").value, password = document.getElementById("r-pass").value;
+            try {
+                const res = await fetch(`${API}/register`, { method: "POST", body: JSON.stringify({ stu_id, name, email, password }) });
+                const data = await res.json();
+                if (res.ok) goToDashboard(data.stu_id, data.name);
+                else showMsg("r-err", data.error);
+            } catch (err) { showMsg("r-err", "Err: " + err.message); console.error(err); }
+        }
+
+        function goToDashboard(id, name) {
+            curStuId = id;
+            document.getElementById("auth-section").classList.add("hidden");
+            document.getElementById("dash-section").classList.remove("hidden");
+            document.getElementById("user-greet").textContent = "Hi, " + name + " 👋";
+            loadCategories().then(() => loadDash());
+        }
+
+        async function loadCategories() {
+            const res = await fetch(`${API}/categories`);
+            allCategories = await res.json();
+            const options = allCategories.map(c => `<option value="${c.cat_id}">${c.cat_name}</option>`).join("");
+            document.getElementById("exp-cat").innerHTML = options;
+            if (document.getElementById("budget-cat")) {
+                document.getElementById("budget-cat").innerHTML = options;
+            }
+        }
+
+        async function loadDash() {
+            const sortVal = document.getElementById("exp-sort") ? document.getElementById("exp-sort").value : "date_desc";
+            const res = await fetch(`${API}/dashboard/${curStuId}?sort=${sortVal}`);
+            const data = await res.json();
+            curAccId = data.account.acc_id;
+            currentBudgets = data.budgets;
+
+            let trendHtml = "";
+            if (data.trend) {
+                const tw = parseFloat(data.trend.this_week);
+                const lw = parseFloat(data.trend.last_week);
+                let diff = tw - lw;
+                if (lw === 0 && tw > 0) diff = tw;
+                let pct = lw > 0 ? (diff / lw) * 100 : (tw > 0 ? 100 : 0);
+
+                if (diff < 0) {
+                    trendHtml = `<span style="color: var(--success); font-size: 0.8em; display:block; margin-top: 4px;">↓ ${Math.abs(pct).toFixed(0)}% less spent this week</span>`;
+                } else if (diff > 0) {
+                    trendHtml = `<span style="color: var(--danger); font-size: 0.8em; display:block; margin-top: 4px;">↑ ${pct.toFixed(0)}% more spent this week</span>`;
+                } else {
+                    trendHtml = `<span style="color: var(--muted); font-size: 0.8em; display:block; margin-top: 4px;">Same spending as last week</span>`;
+                }
+            }
+            document.getElementById("stat-balance").innerHTML = "₹ " + parseFloat(data.account.curr_balance).toFixed(2) + trendHtml;
+            document.getElementById("stat-spent").textContent = "₹ " + data.expenses.reduce((s, e) => s + parseFloat(e.amount), 0).toFixed(2);
+            document.getElementById("stat-count").textContent = data.expenses.length;
+            renderBudget(data.budgets);
+            renderExpenses(data.expenses);
+            renderIncomes(data.incomes);
+        }
+
+        function renderIncomes(incs) {
+            if (!incs) return;
+            const rows = incs.map(i => {
+                const dateStr = (i.date || i.inc_date || "").split('T')[0];
+                return `<tr><td><span class="cat-pill" style="background:var(--mint)">Income</span></td><td style="color:var(--success); font-weight:800;">+₹${parseFloat(i.amount).toFixed(2)}</td><td>${dateStr}</td><td>${i.source || "—"}</td><td><button class="btn danger small" onclick="deleteInc(${i.inc_id})">Delete</button></td></tr>`;
+            }).join("");
+            document.getElementById("inc-table-wrap").innerHTML = `<table class="exp-table"><thead><tr><th>Type</th><th>Amount</th><th>Date</th><th>Source</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>`;
+        }
+
+        function renderBudget(budgets) {
+            document.getElementById("budget-list").innerHTML = budgets.map(c => {
+                const budget = parseFloat(c.budget || 1);
+                const pct = Math.min((c.spent / budget) * 100, 100).toFixed(1);
+                const barClass = pct >= 90 ? "b-danger" : "b-safe";
+                return `<div style="margin-bottom:12px;"><div style="display:flex; justify-content:space-between; font-size:13px;"><span>${c.cat_name}</span><span>₹${parseFloat(c.spent).toFixed(0)} / ₹${budget.toFixed(0)}</span></div><div class="b-track"><div class="b-fill ${barClass}" style="width:${pct}%"></div></div></div>`;
+            }).join("");
+        }
+
+        function renderExpenses(exps) {
+            const getPillClass = (name) => {
+                const n = name.toLowerCase();
+                if (n.includes('food')) return 'pill-food';
+                if (n.includes('travel')) return 'pill-travel';
+                if (n.includes('college') || n.includes('edu')) return 'pill-college';
+                if (n.includes('shop')) return 'pill-shopping';
+                return 'pill-others';
+            };
+
+            const rows = exps.map(e => `<tr><td><span class="cat-pill ${getPillClass(e.cat_name)}">${e.cat_name}</span></td><td style="color:var(--danger); font-weight:800;">-₹${parseFloat(e.amount).toFixed(2)}</td><td>${(e.exp_date || "").split('T')[0]}</td><td>${e.note || "—"}</td><td><button class="btn danger small" onclick="deleteExp(${e.exp_id})">Delete</button></td></tr>`).join("");
+            document.getElementById("exp-table-wrap").innerHTML = `<table class="exp-table"><thead><tr><th>Category</th><th>Amount</th><th>Date</th><th>Note</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>`;
+        }
+
+        async function addExpense() {
+            const amount = parseFloat(document.getElementById("exp-amt").value);
+            const cat_id = document.getElementById("exp-cat").value;
+            const note = document.getElementById("exp-note").value;
+            if (!amount || amount <= 0) return showMsg("exp-err", "Enter valid amount");
+
+            let overbudgetName = null;
+            const selectedCat = allCategories.find(c => String(c.cat_id) === String(cat_id));
+            if (selectedCat) {
+                const catBudgetInfo = currentBudgets.find(b => b.cat_name === selectedCat.cat_name);
+                if (catBudgetInfo) {
+                    const budgetLimit = parseFloat(catBudgetInfo.budget || 1);
+                    const currentSpent = parseFloat(catBudgetInfo.spent || 0);
+                    if (currentSpent + amount > budgetLimit) {
+                        overbudgetName = selectedCat.cat_name;
+                    }
+                }
+            }
+
+            const r = await fetch(`${API}/expense`, { method: "POST", body: JSON.stringify({ acc_id: curAccId, cat_id, amount, note }) });
+            if (!r.ok) {
+                try {
+                    const errData = await r.json();
+                    return showMsg("exp-err", "Database Error: " + (errData.error || "Failed to add expense"));
+                } catch {
+                    return showMsg("exp-err", "Server Error: Could not add expense");
+                }
+            }
+            showMsg("exp-err", ""); // clear errors
+            if (overbudgetName) {
+                showToast(`Warning: You have exceeded your budget for ${overbudgetName}!`);
+            }
+            document.getElementById("exp-amt").value = ""; document.getElementById("exp-note").value = "";
+            loadDash();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            toast.textContent = msg;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 4000);
+        }
+
+        async function addIncome() {
+            const amount = document.getElementById("inc-amt").value;
+            const source = document.getElementById("inc-source").value;
+            if (!amount || amount <= 0) return showMsg("inc-err", "Enter valid amount");
+            await fetch(`${API}/income`, { method: "POST", body: JSON.stringify({ acc_id: curAccId, amount, source }) });
+            document.getElementById("inc-amt").value = ""; document.getElementById("inc-source").value = "";
+            loadDash();
+        }
+
+        async function deleteInc(id) {
+            if (confirm("Delete income?")) {
+                await fetch(`${API}/income/${id}`, { method: "DELETE" });
+                loadDash();
+            }
+        }
+
+        async function updateBudget() {
+            const cat_id = document.getElementById("budget-cat").value;
+            const budget = parseFloat(document.getElementById("budget-amt").value);
+            if (!budget || budget <= 0) return alert("Enter a valid budget limit");
+            await fetch(`${API}/category/${cat_id}/budget`, { method: "PUT", body: JSON.stringify({ budget }) });
+            document.getElementById("budget-amt").value = "";
+            loadCategories().then(() => loadDash());
+        }
+
+        async function deleteExp(id) { if (confirm("Delete expense?")) { await fetch(`${API}/expense/${id}`, { method: "DELETE" }); loadDash(); } }
+        function logout() { location.reload(); }
+    </script>
+</body>
+
+</html>
